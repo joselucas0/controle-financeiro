@@ -1,124 +1,103 @@
-import { motion } from 'framer-motion';
-import { Grid, Card, Typography, useTheme } from '@mui/material';
+import { Grid, Card, Box, Typography } from '@mui/material';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import FinancialCard from '../components/FinancialCard';
-import { 
-  ResponsiveContainer, 
-  PieChart, Pie, Cell, 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
-} from 'recharts';
 
 const data = [
-  { name: 'Jan', receita: 4000, despesa: 2400 },
-  { name: 'Fev', receita: 3000, despesa: 1398 },
-  { name: 'Mar', receita: 2000, despesa: 9800 },
-];
-
-const chartData = [
   { name: 'Receitas', value: 4000, color: '#4CAF50' },
   { name: 'Despesas', value: 1500, color: '#D32F2F' },
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{
+        background: 'white',
+        padding: '8px',
+        borderRadius: '4px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <p style={{ margin: 0, color: payload[0].payload.color }}>
+          {`${payload[0].name}: R$ ${payload[0].value.toLocaleString('pt-BR')}`}
+        </p>
+      </div>
+    );
+  }
+  return null;
 };
 
 export default function Dashboard() {
-  const theme = useTheme();
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      style={{ padding: '20px', marginLeft: 240 }}
-    >
-      <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
-        Visão Geral Financeira
-      </Typography>
-
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {[
-          { title: 'Saldo Atual', value: 'R$ 8.450,00', icon: '💰', trend: '+2.3%' },
-          { title: 'Receitas', value: 'R$ 12.300,00', icon: '📈', trend: '+5.1%' },
-          { title: 'Despesas', value: 'R$ 3.850,00', icon: '📉', trend: '-1.2%' },
-        ].map((card, index) => (
-          <Grid item xs={12} md={4} key={card.title}>
-            <motion.div
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: index * 0.1 }}
-            >
-              <FinancialCard {...card} />
-            </motion.div>
-          </Grid>
-        ))}
-      </Grid>
-
+    <Box sx={{ 
+      width: '100%',
+      maxWidth: 1200,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 3
+    }}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ p: 2, height: 400 }}>
-            <Typography variant="h6" gutterBottom>
-              Tendência Mensal
-            </Typography>
-            <ResponsiveContainer width="100%" height="90%">
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="receita" 
-                  stroke="#4CAF50" 
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="despesa" 
-                  stroke="#D32F2F" 
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Card sx={{ p: 2, height: 400 }}>
-            <Typography variant="h6" gutterBottom>
-              Distribuição de Gastos
-            </Typography>
-            <ResponsiveContainer width="100%" height="90%">
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={index} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Legend 
-                  align="right"
-                  layout="vertical"
-                  verticalAlign="middle"
-                  formatter={(value, entry) => (
-                    <span style={{ color: theme.palette.text.primary }}>
-                      {value} - R$ {entry.payload.value}
-                    </span>
-                  )}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </Card>
-        </Grid>
+        <FinancialCard 
+          title="Saldo Atual" 
+          value="R$ 8.450,00" 
+          trend="+2.3%"
+          period="em relação ao mês passado"
+        />
+        <FinancialCard 
+          title="Receitas" 
+          value="R$ 12.300,00" 
+          trend="+5.1%"
+          period="em relação ao mês passado"
+        />
+        <FinancialCard 
+          title="Despesas" 
+          value="R$ 3.850,00" 
+          trend="-1.2%"
+          period="em relação ao mês passado"
+        />
       </Grid>
-    </motion.div>
+
+      <Card sx={{
+        p: 3,
+        borderRadius: 4,
+        boxShadow: 3,
+        bgcolor: 'background.paper'
+      }}>
+        <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
+          Distribuição Financeira
+        </Typography>
+        <Box sx={{ height: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart margin={{ top: 0, right: 30, left: 30, bottom: 0 }}>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={5}
+              >
+                {data.map((entry, index) => (
+                  <Cell key={index} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                align="right"
+                verticalAlign="middle"
+                layout="vertical"
+                formatter={(value, entry) => (
+                  <span style={{ color: '#2D3436' }}>
+                    {value} - {((entry.payload.percent * 100).toFixed(1))}%
+                  </span>
+                )}
+                iconSize={12}
+                iconType="circle"
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </Card>
+    </Box>
   );
 }

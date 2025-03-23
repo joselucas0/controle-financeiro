@@ -12,6 +12,17 @@ export const GlobalStyles = createGlobalStyle`
     background: ${({ theme }) => theme.palette.background.default};
     font-family: ${({ theme }) => theme.typography.fontFamily};
     min-height: 100vh;
+    
+    &::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      background: ${({ theme }) => theme.palette.primary.gradient};
+      z-index: -1;
+    }
   }
 
   a {

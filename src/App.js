@@ -1,42 +1,73 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { Routes, Route } from 'react-router-dom';
+import { useTheme, useMediaQuery, Box } from '@mui/material';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { theme } from './styles/theme';
 import { GlobalStyles } from './styles/GlobalStyles';
 import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
-import Reports from './pages/Reports';
+import Reports from './pages/Reports'; // Importação adicionada
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [pageTitle, setPageTitle] = useState('Dashboard');
+  const theme = useTheme();
+  const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    const titleMap = {
+      '/': 'Dashboard',
+      '/transactions': 'Transações',
+      '/reports': 'Relatórios'
+    };
+    setPageTitle(titleMap[location.pathname] || 'Controle Financeiro');
+  }, [location.pathname]);
 
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       
-      {/* Top Navigation Bar */}
-      <TopBar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <TopBar 
+        toggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
+        pageTitle={pageTitle}
+      />
       
-      {/* Sidebar with Animation */}
       <Sidebar 
         isOpen={sidebarOpen} 
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
       />
       
-      {/* Main Content Area */}
-      <div style={{ 
-        marginLeft: sidebarOpen ? '240px' : '72px', 
-        transition: 'margin 0.3s ease',
-        padding: '20px'
+      <Box sx={{ 
+        ml: { 
+          xs: 0, 
+          md: sidebarOpen ? '240px' : 0 
+        },
+        pt: '80px', // Espaçamento fixo para a TopBar
+        pb: 3,
+        transition: theme.transitions.create(['margin', 'padding'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen
+        }),
+        px: 3,
+        width: { 
+          xs: '100%', 
+          md: sidebarOpen ? 'calc(100% - 240px)' : '100%' 
+        },
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        zIndex: 1
       }}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
-          <Route path="/reports" element={<Reports />} />
+          <Route path="/reports" element={<Reports />} /> {/* Rota corrigida */}
         </Routes>
-      </div>
+      </Box>
     </ThemeProvider>
   );
 }

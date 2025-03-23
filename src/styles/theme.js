@@ -1,22 +1,20 @@
 export const theme = {
   palette: {
     primary: {
-      main: '#00C853',
-      contrastText: '#fff',
+      main: '#1B5E20',
+      light: '#4CAF50',
+      dark: '#2E7D32',
+      gradient: 'linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%)'
     },
     secondary: {
-      main: '#3D5AFE',
+      main: '#FFC107',
     },
     background: {
       default: '#F5F7FB',
       paper: '#FFFFFF',
     },
-    text: {
-      primary: '#2D3436',
-      secondary: '#636E72',
-    },
   },
   typography: {
-    fontFamily: '"Poppins", "Roboto", sans-serif',
+    fontFamily: '"Poppins", sans-serif',
   },
 };

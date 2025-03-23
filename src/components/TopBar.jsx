@@ -1,25 +1,47 @@
-import { AppBar, Toolbar, IconButton, Badge, Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
 import { Menu, Notifications, AccountCircle } from '@mui/icons-material';
 
-export default function TopBar({ toggleSidebar }) {
+export default function TopBar({ toggleSidebar, pageTitle }) {
   return (
-    <AppBar position="static" color="inherit" elevation={1}>
+    <AppBar 
+      position="fixed"
+      sx={{
+        background: 'linear-gradient(195deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%)',
+        boxShadow: 'none',
+        color: 'white',
+        zIndex: 1300 // Z-index aumentado
+      }}
+    >
       <Toolbar>
-        <IconButton edge="start" onClick={toggleSidebar}>
+        <IconButton
+          edge="start"
+          color="inherit"
+          onClick={toggleSidebar}
+          sx={{ mr: 2 }}
+        >
           <Menu />
         </IconButton>
-        
-        <Box flexGrow={1} />
-        
-        <IconButton>
-          <Badge badgeContent={3} color="primary">
+
+        <Typography 
+          variant="h6"
+          sx={{ 
+            flexGrow: 1,
+            fontWeight: 600,
+            letterSpacing: '0.5px'
+          }}
+        >
+          {pageTitle}
+        </Typography>
+
+        <Box>
+          <IconButton color="inherit">
             <Notifications />
-          </Badge>
-        </IconButton>
-        
-        <IconButton sx={{ ml: 2 }}>
-          <AccountCircle />
-        </IconButton>
+          </IconButton>
+          
+          <IconButton color="inherit" sx={{ ml: 2 }}>
+            <AccountCircle />
+          </IconButton>
+        </Box>
       </Toolbar>
     </AppBar>
   );

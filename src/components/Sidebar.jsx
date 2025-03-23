@@ -1,47 +1,75 @@
-import { NavLink } from 'react-router-dom'; // Adicionar esta linha
+import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { 
-  List, ListItem, ListItemIcon, ListItemText, Divider,
-  Menu // Adicionar esta importação
+  List, ListItem, ListItemIcon, ListItemText, Divider
 } from '@mui/material';
 import { 
-  Home, Receipt, BarChart, Savings, Category, Settings 
-} from '@mui/icons-material'; // Remover AccountBalanceWallet não utilizado
+  Menu, ChevronLeft, HomeRounded, ReceiptRounded,
+  BarChartRounded, CategoryRounded, SavingsRounded, SettingsRounded
+} from '@mui/icons-material';
 
 const sidebarVariants = {
-  open: { width: 240 },
-  closed: { width: 72 },
+  open: { x: 0, width: '240px' },
+  closed: { x: '-100%', width: '0px' },
 };
 
+const gradientStyle = 'linear-gradient(195deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%)';
+
 export default function Sidebar({ isOpen, toggleSidebar }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <motion.div
       animate={isOpen ? "open" : "closed"}
       variants={sidebarVariants}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       style={{
-        background: '#1B5E20',
+        background: gradientStyle,
         height: '100vh',
-        overflow: 'hidden',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
+        overflow: 'hidden',
+        boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
+        width: isMobile ? '100%' : '240px'
       }}
     >
-      <List>
-        <ListItem button onClick={toggleSidebar}>
-          <ListItemIcon sx={{ minWidth: 40 }}>
-            <Menu style={{ color: 'white' }} />
+      <List sx={{ 
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: isOpen ? 'flex-start' : 'center'
+      }}>
+        <ListItem 
+          button 
+          onClick={toggleSidebar}
+          sx={{ 
+            width: '100%',
+            justifyContent: isOpen ? 'flex-end' : 'center',
+            mb: 2
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: 'auto', color: 'white' }}>
+            {isOpen ? <ChevronLeft /> : <Menu />}
           </ListItemIcon>
         </ListItem>
-        
-        <NavItem to="/" icon={<Home />} text="Dashboard" />
-        <NavItem to="/transactions" icon={<Receipt />} text="Transações" />
-        <NavItem to="/reports" icon={<BarChart />} text="Relatórios" />
-        
-        <Divider sx={{ my: 2, bgcolor: 'rgba(255,255,255,0.2)' }} />
-        
-        <NavItem to="/categories" icon={<Category />} text="Categorias" />
-        <NavItem to="/goals" icon={<Savings />} text="Metas" />
-        <NavItem to="/settings" icon={<Settings />} text="Configurações" />
+
+        {isOpen && (
+          <>
+            <NavItem to="/" icon={<HomeRounded />} text="Dashboard" />
+            <NavItem to="/transactions" icon={<ReceiptRounded />} text="Transações" />
+            <NavItem to="/reports" icon={<BarChartRounded />} text="Relatórios" />
+            <Divider sx={{ 
+              my: 2, 
+              bgcolor: 'rgba(255,255,255,0.2)',
+              width: '100%' 
+            }} />
+            <NavItem to="/categories" icon={<CategoryRounded />} text="Categorias" />
+            <NavItem to="/goals" icon={<SavingsRounded />} text="Metas" />
+            <NavItem to="/settings" icon={<SettingsRounded />} text="Configurações" />
+          </>
+        )}
       </List>
     </motion.div>
   );
@@ -54,16 +82,33 @@ function NavItem({ to, icon, text }) {
       component={NavLink} 
       to={to}
       sx={{
+        borderRadius: '12px',
+        marginBottom: '8px',
+        width: '100%',
         '&.active': {
-          bgcolor: 'rgba(255,255,255,0.1)',
-          borderRight: '3px solid #4CAF50'
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          '& .MuiListItemIcon-root': {
+            color: '#C8E6C9'
+          }
         }
       }}
     >
-      <ListItemIcon sx={{ minWidth: 40, color: 'white' }}>
+      <ListItemIcon sx={{ 
+        minWidth: 'auto', 
+        color: 'white',
+        mr: 2
+      }}>
         {icon}
       </ListItemIcon>
-      <ListItemText primary={text} sx={{ color: 'white' }} />
+      <ListItemText 
+        primary={text} 
+        primaryTypographyProps={{
+          color: 'white',
+          fontWeight: 500,
+          variant: 'body2',
+          sx: { whiteSpace: 'nowrap' }
+        }} 
+      />
     </ListItem>
   );
 }
