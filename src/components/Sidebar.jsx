@@ -1,48 +1,69 @@
-import { NavLink } from 'react-router-dom';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Home, AttachMoney, BarChart } from '@mui/icons-material';
+import { NavLink } from 'react-router-dom'; // Adicionar esta linha
+import { motion } from 'framer-motion';
+import { 
+  List, ListItem, ListItemIcon, ListItemText, Divider,
+  Menu // Adicionar esta importação
+} from '@mui/material';
+import { 
+  Home, Receipt, BarChart, Savings, Category, Settings 
+} from '@mui/icons-material'; // Remover AccountBalanceWallet não utilizado
 
-export default function Sidebar() {
-  const activeStyle = {
-    backgroundColor: '#4CAF50',
-  };
+const sidebarVariants = {
+  open: { width: 240 },
+  closed: { width: 72 },
+};
 
+export default function Sidebar({ isOpen, toggleSidebar }) {
   return (
-    <div style={{ 
-      width: 250, 
-      minHeight: '100vh', 
-      backgroundColor: '#1B5E20',
-      padding: '20px 0'
-    }}>
+    <motion.div
+      animate={isOpen ? "open" : "closed"}
+      variants={sidebarVariants}
+      style={{
+        background: '#1B5E20',
+        height: '100vh',
+        overflow: 'hidden',
+        position: 'fixed',
+        zIndex: 1000
+      }}
+    >
       <List>
-        <NavLink 
-          to="/" 
-          style={({ isActive }) => isActive ? activeStyle : undefined}
-        >
-          <ListItem button>
-            <ListItemIcon><Home style={{ color: 'white' }} /></ListItemIcon>
-            <ListItemText primary="Dashboard" style={{ color: 'white' }} />
-          </ListItem>
-        </NavLink>
-        <NavLink 
-          to="/transactions"
-          style={({ isActive }) => isActive ? activeStyle : undefined}
-        >
-          <ListItem button>
-            <ListItemIcon><AttachMoney style={{ color: 'white' }} /></ListItemIcon>
-            <ListItemText primary="Transações" style={{ color: 'white' }} />
-          </ListItem>
-        </NavLink>
-        <NavLink 
-          to="/reports"
-          style={({ isActive }) => isActive ? activeStyle : undefined}
-        >
-          <ListItem button>
-            <ListItemIcon><BarChart style={{ color: 'white' }} /></ListItemIcon>
-            <ListItemText primary="Relatórios" style={{ color: 'white' }} />
-          </ListItem>
-        </NavLink>
+        <ListItem button onClick={toggleSidebar}>
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <Menu style={{ color: 'white' }} />
+          </ListItemIcon>
+        </ListItem>
+        
+        <NavItem to="/" icon={<Home />} text="Dashboard" />
+        <NavItem to="/transactions" icon={<Receipt />} text="Transações" />
+        <NavItem to="/reports" icon={<BarChart />} text="Relatórios" />
+        
+        <Divider sx={{ my: 2, bgcolor: 'rgba(255,255,255,0.2)' }} />
+        
+        <NavItem to="/categories" icon={<Category />} text="Categorias" />
+        <NavItem to="/goals" icon={<Savings />} text="Metas" />
+        <NavItem to="/settings" icon={<Settings />} text="Configurações" />
       </List>
-    </div>
+    </motion.div>
+  );
+}
+
+function NavItem({ to, icon, text }) {
+  return (
+    <ListItem 
+      button 
+      component={NavLink} 
+      to={to}
+      sx={{
+        '&.active': {
+          bgcolor: 'rgba(255,255,255,0.1)',
+          borderRight: '3px solid #4CAF50'
+        }
+      }}
+    >
+      <ListItemIcon sx={{ minWidth: 40, color: 'white' }}>
+        {icon}
+      </ListItemIcon>
+      <ListItemText primary={text} sx={{ color: 'white' }} />
+    </ListItem>
   );
 }
