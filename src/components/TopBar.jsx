@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
-import { Menu, Notifications, AccountCircle } from '@mui/icons-material';
+import { Menu, Notifications, AccountCircle, Add } from '@mui/icons-material';
 
-export default function TopBar({ toggleSidebar, pageTitle }) {
+export default function TopBar({ toggleSidebar, pageTitle, onAddClick }) {
   return (
     <AppBar 
       position="fixed"
@@ -9,7 +9,7 @@ export default function TopBar({ toggleSidebar, pageTitle }) {
         background: 'linear-gradient(195deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%)',
         boxShadow: 'none',
         color: 'white',
-        zIndex: 1300 // Z-index aumentado
+        zIndex: 1300
       }}
     >
       <Toolbar>
@@ -34,6 +34,10 @@ export default function TopBar({ toggleSidebar, pageTitle }) {
         </Typography>
 
         <Box>
+          <IconButton color="inherit" onClick={onAddClick}>
+            <Add />
+          </IconButton>
+          
           <IconButton color="inherit">
             <Notifications />
           </IconButton>
